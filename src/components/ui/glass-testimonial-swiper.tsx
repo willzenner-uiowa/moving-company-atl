@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect, useCallback, CSSProperties } from 'react';
 
-// --- Component Interfaces ---
 export interface Testimonial {
   id: string | number;
   initials: string;
@@ -15,17 +14,14 @@ export interface Testimonial {
 
 export interface TestimonialStackProps {
   testimonials: Testimonial[];
-  /** How many cards to show behind the main card */
   visibleBehind?: number;
 }
 
-// --- The Component ---
 export const TestimonialStack = ({ testimonials, visibleBehind = 2 }: TestimonialStackProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState(0);
   const dragStartRef = useRef(0);
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const totalCards = testimonials.length;
 
   const navigate = useCallback((newIndex: number) => {
@@ -37,19 +33,17 @@ export const TestimonialStack = ({ testimonials, visibleBehind = 2 }: Testimonia
     setIsDragging(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
     dragStartRef.current = clientX;
-    cardRefs.current[activeIndex]?.classList.add('is-dragging');
   };
 
   const handleDragMove = useCallback((e: MouseEvent | TouchEvent) => {
     if (!isDragging) return;
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
+    const clientX = 'touches' in e ? (e as TouchEvent).touches[0].clientX : (e as MouseEvent).clientX;
     setDragOffset(clientX - dragStartRef.current);
   }, [isDragging]);
 
   const handleDragEnd = useCallback(() => {
     if (!isDragging) return;
-    cardRefs.current[activeIndex]?.classList.remove('is-dragging');
-    if (Math.abs(dragOffset) > 50) {
+    if (Math.abs(dragOffset) > 60) {
       navigate(activeIndex + (dragOffset < 0 ? 1 : -1));
     }
     setIsDragging(false);
@@ -58,103 +52,166 @@ export const TestimonialStack = ({ testimonials, visibleBehind = 2 }: Testimonia
 
   useEffect(() => {
     if (isDragging) {
-      window.addEventListener('mousemove', handleDragMove);
-      window.addEventListener('touchmove', handleDragMove);
+      window.addEventListener('mousemove', handleDragMove as EventListener);
+      window.addEventListener('touchmove', handleDragMove as EventListener);
       window.addEventListener('mouseup', handleDragEnd);
       window.addEventListener('touchend', handleDragEnd);
     }
     return () => {
-      window.removeEventListener('mousemove', handleDragMove);
-      window.removeEventListener('touchmove', handleDragMove);
+      window.removeEventListener('mousemove', handleDragMove as EventListener);
+      window.removeEventListener('touchmove', handleDragMove as EventListener);
       window.removeEventListener('mouseup', handleDragEnd);
       window.removeEventListener('touchend', handleDragEnd);
     };
   }, [isDragging, handleDragMove, handleDragEnd]);
-  
+
   if (!testimonials?.length) return null;
 
   return (
-    <section className="testimonials-stack relative pb-10">
-      {testimonials.map((testimonial, index) => {
-        // Calculate the card's position in the display order
-        const displayOrder = (index - activeIndex + totalCards) % totalCards;
+    <div>
+      {/* Card stack */}
+      <div style={{ position: 'relative', height: 380 }}>
+        {testimonials.map((testimonial, index) => {
+          const displayOrder = (index - activeIndex + totalCards) % totalCards;
 
-        // --- DYNAMIC STYLE CALCULATION ---
-        const style: CSSProperties = {};
-        if (displayOrder === 0) { // The active card
-          style.transform = `translateX(${dragOffset}px)`;
-          style.opacity = 1;
-          style.zIndex = totalCards;
-        } else if (displayOrder <= visibleBehind) { // Cards stacked behind
-          const scale = 1 - 0.05 * displayOrder;
-          const translateY = -2 * displayOrder; // in rem
-          style.transform = `scale(${scale}) translateY(${translateY}rem)`;
-          style.opacity = 1 - 0.2 * displayOrder;
-          style.zIndex = totalCards - displayOrder;
-        } else { // Cards that are out of view
-          style.transform = 'scale(0)';
-          style.opacity = 0;
-          style.zIndex = 0;
-        }
+          const style: CSSProperties = {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            transition: isDragging && displayOrder === 0 ? 'none' : 'transform 0.45s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease',
+            cursor: displayOrder === 0 ? (isDragging ? 'grabbing' : 'grab') : 'default',
+            userSelect: 'none',
+            borderRadius: 12,
+            background: 'rgba(255,255,255,0.04)',
+            border: '1px solid rgba(43,122,181,0.18)',
+            backdropFilter: 'blur(20px)',
+            boxShadow: displayOrder === 0 ? '0 24px 60px rgba(0,0,0,0.4)' : 'none',
+          };
 
-        const tagClasses = (type: 'featured' | 'default') => type === 'featured' 
-          ? 'bg-primary/20 text-primary border border-primary/30' 
-          : 'bg-secondary text-secondary-foreground';
-          
-        return (
-          <div
-            ref={(el) => { cardRefs.current[index] = el; }}
-            key={testimonial.id}
-            className="testimonial-card glass-effect backdrop-blur-xl"
-            style={style} // Apply dynamic styles here
-            onMouseDown={(e) => handleDragStart(e, index)}
-            onTouchStart={(e) => handleDragStart(e, index)}
-          >
-            <div className="p-6 md:p-8">
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex-shrink-0 w-11 h-11 rounded-xl flex items-center justify-center text-white font-semibold text-base" style={{ background: testimonial.avatarGradient }}>
+          if (displayOrder === 0) {
+            style.transform = `translateX(${dragOffset}px)`;
+            style.opacity = 1;
+            style.zIndex = totalCards;
+          } else if (displayOrder <= visibleBehind) {
+            const scale = 1 - 0.05 * displayOrder;
+            const translateY = 14 * displayOrder;
+            style.transform = `scale(${scale}) translateY(${translateY}px)`;
+            style.opacity = 1 - 0.25 * displayOrder;
+            style.zIndex = totalCards - displayOrder;
+            style.pointerEvents = 'none';
+          } else {
+            style.transform = 'scale(0.85) translateY(40px)';
+            style.opacity = 0;
+            style.zIndex = 0;
+            style.pointerEvents = 'none';
+          }
+
+          return (
+            <div
+              key={testimonial.id}
+              style={style}
+              onMouseDown={(e) => handleDragStart(e, index)}
+              onTouchStart={(e) => handleDragStart(e, index)}
+            >
+              <div style={{ padding: '28px 32px' }}>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>
+                  <div style={{
+                    flexShrink: 0, width: 46, height: 46, borderRadius: 10,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color: '#fff', fontWeight: 700, fontSize: 16,
+                    background: testimonial.avatarGradient,
+                  }}>
                     {testimonial.initials}
                   </div>
                   <div>
-                    <h3 className="text-card-foreground font-medium text-lg">{testimonial.name}</h3>
-                    <p className="text-sm text-muted-foreground mt-1">{testimonial.role}</p>
+                    <div style={{ color: '#fff', fontWeight: 600, fontSize: 16 }}>{testimonial.name}</div>
+                    <div style={{ color: '#7A9BB5', fontSize: 13, marginTop: 2 }}>
+                      {/* 5 gold stars */}
+                      {[0,1,2,3,4].map(i => (
+                        <svg key={i} style={{ display: 'inline', width: 13, height: 13, marginRight: 1 }} viewBox="0 0 24 24" fill="#F5C518">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                      ))}
+                      <span style={{ marginLeft: 6, verticalAlign: 'middle' }}>Google Review</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <blockquote className="text-card-foreground/90 leading-relaxed text-lg mb-6">&ldquo;{testimonial.quote}&rdquo;</blockquote>
-              
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between border-t border-border pt-4 gap-4">
-                <div className="flex flex-wrap gap-2">
+
+                {/* Quote */}
+                <blockquote style={{
+                  color: 'rgba(255,255,255,0.85)', fontSize: 15, lineHeight: 1.75,
+                  marginBottom: 20, fontStyle: 'italic',
+                }}>
+                  &ldquo;{testimonial.quote}&rdquo;
+                </blockquote>
+
+                {/* Tags */}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, borderTop: '1px solid rgba(43,122,181,0.15)', paddingTop: 16 }}>
                   {testimonial.tags.map((tag, i) => (
-                    <span key={i} className={['text-xs', 'px-2', 'py-1', 'rounded-md', tagClasses(tag.type)].join(' ')}>
+                    <span key={i} style={{
+                      fontSize: 11, padding: '3px 10px', borderRadius: 6, fontWeight: 600,
+                      background: tag.type === 'featured' ? 'rgba(43,122,181,0.2)' : 'rgba(255,255,255,0.06)',
+                      color: tag.type === 'featured' ? '#5BA8E0' : '#A0B8CC',
+                      border: tag.type === 'featured' ? '1px solid rgba(43,122,181,0.3)' : '1px solid rgba(255,255,255,0.08)',
+                    }}>
                       {tag.text}
                     </span>
                   ))}
                 </div>
-                <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                  {testimonial.stats.map((stat, i) => {
-                    const IconComponent = stat.icon;
-                    return (
-                      <span key={i} className="flex items-center">
-                        <IconComponent className="mr-1.5 h-3.5 w-3.5" />
-                        {stat.text}
-                      </span>
-                    );
-                  })}
-                </div>
               </div>
             </div>
-          </div>
-        );
-      })}
-      
-      <div className="pagination flex gap-2 justify-center absolute bottom-0 left-0 right-0">
-        {testimonials.map((_, index) => (
-          <button key={index} aria-label={`Go to testimonial ${index + 1}`} onClick={() => navigate(index)} className={`pagination-dot ${activeIndex === index ? 'active' : ''}`} />
-        ))}
+          );
+        })}
       </div>
-    </section>
+
+      {/* Controls */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16, marginTop: 32 }}>
+        {/* Prev */}
+        <button
+          onClick={() => navigate(activeIndex - 1)}
+          style={{ background: 'rgba(43,122,181,0.15)', border: '1px solid rgba(43,122,181,0.3)', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#5BA8E0' }}
+          aria-label="Previous review"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+
+        {/* Dots */}
+        <div style={{ display: 'flex', gap: 6 }}>
+          {testimonials.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => navigate(index)}
+              aria-label={`Go to review ${index + 1}`}
+              style={{
+                width: activeIndex === index ? 20 : 7,
+                height: 7,
+                borderRadius: 4,
+                border: 'none',
+                cursor: 'pointer',
+                transition: 'width 0.3s ease, background 0.3s ease',
+                background: activeIndex === index ? '#2B7AB5' : 'rgba(255,255,255,0.2)',
+                padding: 0,
+              }}
+            />
+          ))}
+        </div>
+
+        {/* Next */}
+        <button
+          onClick={() => navigate(activeIndex + 1)}
+          style={{ background: 'rgba(43,122,181,0.15)', border: '1px solid rgba(43,122,181,0.3)', borderRadius: '50%', width: 38, height: 38, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#5BA8E0' }}
+          aria-label="Next review"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+
+      {/* Counter */}
+      <div style={{ textAlign: 'center', marginTop: 12, color: '#4A6A7A', fontSize: 13 }}>
+        {activeIndex + 1} / {totalCards}
+      </div>
+    </div>
   );
 };
