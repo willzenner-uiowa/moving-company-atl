@@ -62,9 +62,30 @@ export default function MovingContact() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setError(null);
+    try {
+      const res = await fetch("https://formspree.io/f/mjgqkrny", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(form),
+      });
+      if (res.ok) {
+        setSubmitted(true);
+      } else {
+        const data = await res.json().catch(() => ({}));
+        setError((data as { error?: string }).error ?? "Something went wrong. Please try again or call us directly.");
+      }
+    } catch {
+      setError("Network error. Please check your connection and try again.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const [msgFocused, setMsgFocused] = useState(false);
@@ -158,17 +179,23 @@ export default function MovingContact() {
                   />
                 </div>
 
+                {/* Error message */}
+                {error && (
+                  <p className="text-center font-medium" style={{ fontSize: 13, color: "#F87171" }}>{error}</p>
+                )}
+
                 {/* Submit */}
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  disabled={submitting}
+                  whileHover={submitting ? {} : { scale: 1.02 }}
+                  whileTap={submitting ? {} : { scale: 0.98 }}
                   transition={{ duration: 0.25 }}
                   className="w-full flex items-center justify-center gap-3 text-white font-semibold text-[16px] mt-2"
-                  style={{ padding: "18px", borderRadius: 0, background: BRAND }}
+                  style={{ padding: "18px", borderRadius: 0, background: submitting ? "#1A4A7A" : BRAND, opacity: submitting ? 0.7 : 1, cursor: submitting ? "not-allowed" : "pointer" }}
                 >
                   <Send size={16} />
-                  Send My Request
+                  {submitting ? "Sending…" : "Send My Request"}
                 </motion.button>
 
                 <p className="text-center font-light" style={{ fontSize: 12, color: "#4A6A7A" }}>
