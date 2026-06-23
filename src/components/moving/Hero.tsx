@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const BRAND   = "#2B7AB5";
 const TEAL    = "#3D9AB0";
@@ -47,13 +48,16 @@ export default function MovingHero() {
       <style dangerouslySetInnerHTML={{ __html: HERO_STYLES }} />
 
       {/* Background — moving job photo */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/moving-job2.jpg"
-        alt=""
-        aria-hidden
-        className="absolute inset-0 w-full h-full object-cover z-0"
-      />
+      <div className="absolute inset-0 z-0" aria-hidden>
+        <Image
+          src="/images/moving-job2.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          priority
+          sizes="100vw"
+        />
+      </div>
 
       {/* Dark overlay */}
       <div

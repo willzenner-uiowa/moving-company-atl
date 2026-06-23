@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import Image from "next/image";
 import { Clock, Star, Zap, DollarSign } from "lucide-react";
 import { fadeUp, stagger, scaleIn } from "@/lib/animations";
 
@@ -45,16 +46,21 @@ export default function MovingWhyUs() {
     <section id="why-us" className="relative w-full overflow-hidden" style={{ padding: "120px 0", background: "#0C1822" }}>
 
       {/* Background — job photo 1 as subtle accent */}
-      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
+      <div
+        className="absolute inset-0 z-0 pointer-events-none"
+        aria-hidden
+        style={{
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
+          opacity: 0.06,
+        }}
+      >
+        <Image
           src="/images/moving-job1.jpg"
           alt=""
-          className="w-full h-full object-cover opacity-[0.06]"
-          style={{
-            maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
-            WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%)",
-          }}
+          fill
+          className="object-cover"
+          sizes="100vw"
         />
       </div>
 
