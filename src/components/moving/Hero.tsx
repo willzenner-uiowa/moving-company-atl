@@ -117,7 +117,7 @@ export default function MovingHero() {
 
         {/* Subheadline */}
         <motion.p
-          initial="hidden" animate="visible" variants={d(0.5)}
+          initial={{ opacity: 1, y: 0 }}
           className="font-light leading-[1.7] max-w-[540px] mb-10"
           style={{ fontSize: 18, color: "#A0B8CC" }}
         >
