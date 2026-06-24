@@ -148,6 +148,20 @@ export default function MovingHero() {
           >
             Call 470-658-7092
           </motion.a>
+          <motion.a
+            href="https://www.google.com/maps/place/The+Moving+Company/@33.9605647,-84.2029071,11z/data=!4m18!1m9!3m8!1s0xadbf9397e283e693:0xa149df7ff17cb0dd!2sThe+Moving+Company!8m2!3d33.9606745!4d-84.0380985!9m1!1b1!16s%2Fg%2F11y4yl9zkw!3m7!1s0xadbf9397e283e693:0xa149df7ff17cb0dd!8m2!3d33.9606745!4d-84.0380985!9m1!1b1!16s%2Fg%2F11y4yl9zkw?entry=ttu"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.04, boxShadow: "0 8px 30px rgba(245,197,24,0.2)" }} whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.25 }}
+            className="inline-flex items-center justify-center gap-2 text-white font-semibold text-[15px]"
+            style={{ padding: "16px 36px", borderRadius: 0, border: "2px solid rgba(245,197,24,0.4)" }}
+          >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Leave Us a Google Review
+          </motion.a>
         </motion.div>
 
         {/* Social proof */}
