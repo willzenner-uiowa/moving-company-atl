@@ -47,26 +47,36 @@ export default function MovingGoogleReviews() {
           </div>
         </motion.div>
 
-        {/* CTA button */}
-        <motion.a
-          href={GOOGLE_REVIEW_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
-          whileHover={{ scale: 1.04, boxShadow: "0 8px 30px rgba(245,197,24,0.25)" }}
-          whileTap={{ scale: 0.97 }}
-          className="inline-flex items-center gap-2 font-bold text-white shrink-0"
-          style={{ padding: "14px 28px", background: BRAND, fontSize: 15, borderRadius: 0, border: "2px solid rgba(245,197,24,0.4)" }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-          Leave Us a Google Review
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
-            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-          </svg>
-        </motion.a>
+        {/* CTA buttons */}
+        <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+          <motion.a
+            href={GOOGLE_REVIEW_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+            whileHover={{ scale: 1.04, boxShadow: "0 8px 30px rgba(245,197,24,0.25)" }}
+            whileTap={{ scale: 0.97 }}
+            className="inline-flex items-center gap-2 font-bold text-white shrink-0"
+            style={{ padding: "14px 28px", background: BRAND, fontSize: 15, borderRadius: 0, border: "2px solid rgba(245,197,24,0.4)" }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Leave Us a Google Review
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
+              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+          </motion.a>
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
+            className="font-light text-center sm:text-left"
+            style={{ fontSize: 13, color: "#4A6A7A" }}
+          >
+            Share your experience on Google.
+          </motion.p>
+        </div>
       </div>
     </section>
   );

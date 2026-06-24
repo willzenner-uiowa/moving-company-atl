@@ -206,35 +206,6 @@ export default function MovingContact() {
           </AnimatePresence>
         </motion.div>
 
-        {/* Google Review CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] as [number,number,number,number] }}
-          className="mt-14 flex flex-col sm:flex-row items-center justify-center gap-4 pt-12"
-          style={{ borderTop: "1px solid rgba(43,122,181,0.15)" }}
-        >
-          <p className="font-light text-center" style={{ fontSize: 16, color: "#7A9BB5" }}>
-            Happy with your move? Let others know.
-          </p>
-          <motion.a
-            href="https://www.google.com/maps/place/The+Moving+Company/@33.9605647,-84.2029071,11z/data=!4m18!1m9!3m8!1s0xadbf9397e283e693:0xa149df7ff17cb0dd!2sThe+Moving+Company!8m2!3d33.9606745!4d-84.0380985!9m1!1b1!16s%2Fg%2F11y4yl9zkw!3m7!1s0xadbf9397e283e693:0xa149df7ff17cb0dd!8m2!3d33.9606745!4d-84.0380985!9m1!1b1!16s%2Fg%2F11y4yl9zkw?entry=ttu&g_ep=EgoyMDI2MDYxNi4wIKXMDSoASAFQAw%3D%3D"
-            target="_blank"
-            rel="noopener noreferrer"
-            whileHover={{ scale: 1.04, boxShadow: "0 8px 30px rgba(245,197,24,0.2)" }}
-            whileTap={{ scale: 0.97 }}
-            className="inline-flex items-center gap-2 font-bold text-white shrink-0"
-            style={{ padding: "14px 28px", background: BRAND, fontSize: 15, borderRadius: 0, border: "2px solid rgba(245,197,24,0.35)" }}
-          >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-            Leave Us a Google Review
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="#F5C518" stroke="none">
-              <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-            </svg>
-          </motion.a>
-        </motion.div>
       </div>
     </section>
   );
